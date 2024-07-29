@@ -2,6 +2,7 @@ import express from "express";
 import { authorizeRoles, isAuthenticated } from "../middleware/auth";
 import {
   createBooking,
+  createMobileBooking,
   getAllBookings,
   getAllBookingsUser,
   updateBookingStatus,
@@ -9,6 +10,8 @@ import {
 const bookingRouter = express.Router();
 
 bookingRouter.post("/create-booking", isAuthenticated, createBooking);
+bookingRouter.post("/create-mobile-booking", isAuthenticated, createMobileBooking);
+
 bookingRouter.get(
   "/get-bookings",
   isAuthenticated,
@@ -18,13 +21,11 @@ bookingRouter.get(
 bookingRouter.get(
   "/get-bookings-user/:id",
   isAuthenticated,
-  authorizeRoles("admin"),
   getAllBookingsUser
 );
 bookingRouter.put(
   "/update-booking-status/:id",
   isAuthenticated,
-  authorizeRoles("admin"),
   updateBookingStatus
 );
 

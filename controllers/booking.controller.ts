@@ -9,8 +9,15 @@ import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
 import { getAllBookingsService, newBooking } from "../services/booking.service";
 import userModel from "../models/user.model";
+import { redis } from "../utils/redis";
+import { MidtransClient } from "midtrans-node-client";
 
-//create booking
+const midtrans = new MidtransClient.Snap({
+  isProduction: false,
+  serverKey: process.env.MIDTRANS_SERVER_KEY,
+  clientKey: process.env.MIDTRANS_CLIENT_KEY,
+});
+
 export const createBooking = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -75,16 +82,121 @@ export const createBooking = CatchAsyncError(
 
       treatment.booked += 1;
 
-      await treatment.save();
+      const midtransTransaction = {
+        transaction_details: {
+          order_id: `order-${Date.now()}`,
+          gross_amount: treatment.price,
+        },
+        credit_card: {
+          secure: true,
+        },
+      };
 
-      newBooking(data, res, next);
+      const midtransResponse = await midtrans.createTransaction(
+        midtransTransaction
+      );
+
+      await newBooking(data, midtransResponse);
+
+      res.status(201).json({
+        success: true,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
   }
 );
 
-//get All Booking
+export const createMobileBooking = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { treatmentId, payment_info, bookingDate, bookingTime } =
+        req.body as IBooking;
+      const user = await userModel.findById(req.user?._id);
+      const treatment: any = await TreatmentModel.findById(treatmentId);
+
+      if (!treatment) {
+        return next(new ErrorHandler("Treatment not found", 404));
+      }
+
+      const data: any = {
+        treatmentId: treatment._id,
+        userId: user?._id,
+        payment_info,
+        bookingDate,
+        bookingTime,
+      };
+
+      const mailData = {
+        order: {
+          _id: treatment._id.toString().slice(0, 6),
+          name: treatment.name,
+          price: treatment.price,
+          bookingDate,
+          bookingTime,
+          date: new Date().toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        },
+      };
+
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../mails/order-confirmation.ejs"),
+        { order: mailData }
+      );
+
+      try {
+        if (user) {
+          await sendMail({
+            email: user.email,
+            subject: "Order Confirmation",
+            template: "order-confirmation.ejs",
+            data: mailData,
+          });
+        }
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+
+      user?.treatments.push(treatment?._id);
+      await redis.set(req.user?._id as string, JSON.stringify(user));
+      await user?.save();
+
+      await NotificationModel.create({
+        user: user?._id,
+        title: "New Order",
+        message: `You have a new order from ${treatment?.name} on ${bookingDate} at ${bookingTime}`,
+      });
+
+      treatment.booked += 1;
+
+      await treatment.save();
+
+      const midtransTransaction = {
+        transaction_details: {
+          order_id: `order-${Date.now()}`,
+          gross_amount: treatment.price,
+        },
+        credit_card: {
+          secure: true,
+        },
+      };
+
+      const midtransResponse = await midtrans.createTransaction(
+        midtransTransaction
+      );
+
+      await newBooking(data, midtransResponse);
+
+      res.json({ midtransResponse });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
 export const getAllBookings = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -95,15 +207,17 @@ export const getAllBookings = CatchAsyncError(
   }
 );
 
-//get all bookings of user
 export const getAllBookingsUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const bookings = await BookingModel.find({
-        userUd: req.user?._id,
-      }).sort({
-        createdAt: -1,
-      });
+        userId: req.user?._id,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .populate("userId")
+        .populate("treatmentId");
 
       res.status(201).json({
         success: true,
@@ -115,7 +229,6 @@ export const getAllBookingsUser = CatchAsyncError(
   }
 );
 
-//update bookings Status
 export const updateBookingStatus = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -10,7 +10,6 @@ import NotificationModel from "../models/notification.model";
 import ErrorHandler from "../utils/ErrorHandler";
 import { redis } from "../utils/redis";
 
-//Upload Treatment
 export const uploadTreatment = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -35,7 +34,6 @@ export const uploadTreatment = CatchAsyncError(
   }
 );
 
-//Edit Treatment
 export const editTreatment = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -72,7 +70,6 @@ export const editTreatment = CatchAsyncError(
   }
 );
 
-//get single treatment -- without purchase
 export const getSingleTreatment = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -101,7 +98,6 @@ export const getSingleTreatment = CatchAsyncError(
   }
 );
 
-//get Treatment Content -- only for valid User
 export const getTreatmentByUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -129,7 +125,6 @@ export const getTreatmentByUser = CatchAsyncError(
   }
 );
 
-//add review in treatment
 interface IAddReviewData {
   treatmentId: string;
   review: string;
@@ -142,7 +137,6 @@ export const addReview = CatchAsyncError(
       const userTreatmentList = req.user?.treatments;
       const treatmentId = req.params.id;
 
-      //check if treatment is exist in user treatment list base on _id
       const treatmentExist = userTreatmentList?.find(
         (treatment: any) => treatment._id.toString() === treatmentId
       );
@@ -191,7 +185,6 @@ export const addReview = CatchAsyncError(
   }
 );
 
-//add replies review in treatment
 interface IAddReviewData {
   comment: string;
   treatmentId: string;
@@ -234,7 +227,6 @@ export const addReplyToReview = CatchAsyncError(
   }
 );
 
-//get all treatment
 export const getAllTreatments = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -245,7 +237,6 @@ export const getAllTreatments = CatchAsyncError(
   }
 );
 
-//delete treatment -- only admin
 export const deleteTreatment = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

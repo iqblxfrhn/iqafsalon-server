@@ -1,10 +1,12 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+import { IUser } from "./user.model";
+import { ITreatment } from "./treatment.model";
 
 export interface IBooking extends Document {
-  userId: string;
-  treatmentId: string;
-  bookingDate: Date;
-  bookingTime: string; // format HH:mm
+  userId: IUser["_id"];
+  treatmentId: ITreatment["_id"];
+  bookingDate: string;
+  bookingTime: string; 
   status: string;
   payment_info: object;
   finishedAt: Date;
@@ -13,15 +15,17 @@ export interface IBooking extends Document {
 const bookingSchema = new Schema<IBooking>(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     treatmentId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Treatment",
       required: true,
     },
     bookingDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     bookingTime: {

@@ -1,9 +1,12 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+import { IProduct } from "./product.model";
+import { IUser } from "./user.model";
 
 export interface IOrder extends Document {
-  productId: string;
-  userId: string;
+  productId: IProduct["_id"];
+  userId: IUser["_id"];
   payment_info: object;
+  quantity: number;
   status: string;
   deliveredAt: Date;
 }
@@ -11,16 +14,20 @@ export interface IOrder extends Document {
 const orderSchema = new Schema<IOrder>(
   {
     productId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
       required: true,
     },
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     payment_info: {
       type: Object,
-      // required: true,
+    },
+    quantity: {
+      type: Number,
     },
     status: {
       type: String,

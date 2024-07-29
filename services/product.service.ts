@@ -2,7 +2,6 @@ import { Response } from "express";
 import ProductModel from "../models/product.model";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 
-//create product
 export const createProduct = CatchAsyncError(
   async (data: any, res: Response) => {
     const product = await ProductModel.create(data);

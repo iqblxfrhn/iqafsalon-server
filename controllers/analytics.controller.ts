@@ -6,7 +6,6 @@ import userModel from "../models/user.model";
 import ProductModel from "../models/product.model";
 import OrderModel from "../models/order.model";
 
-//get users analytics--only admin
 export const getUsersAnalytics = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -21,7 +20,6 @@ export const getUsersAnalytics = CatchAsyncError(
     }
   }
 );
-//get product analytics--only admin
 export const getProductsAnalytics = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -36,7 +34,6 @@ export const getProductsAnalytics = CatchAsyncError(
     }
   }
 );
-//get order analytics--only admin
 export const getOrdersAnalytics = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

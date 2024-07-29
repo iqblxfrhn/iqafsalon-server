@@ -16,7 +16,6 @@ import {
 } from "../services/user.service";
 import cloudinary from "cloudinary";
 
-//Register User
 interface IRegistrationBody {
   name: string;
   email: string;
@@ -94,7 +93,6 @@ export const createActivationToken = (user: any): IActivationToken => {
   return { token, activationCode };
 };
 
-//activate user
 interface IActivationRequest {
   activation_token: string;
   activation_code: string;
@@ -137,7 +135,6 @@ export const activateUser = CatchAsyncError(
   }
 );
 
-// Refresh activation code
 export const refreshActivationCode = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -185,7 +182,6 @@ export const refreshActivationCode = CatchAsyncError(
   }
 );
 
-//login user
 interface ILoginRequest {
   email: string;
   password: string;
@@ -216,7 +212,6 @@ export const loginUser = CatchAsyncError(
   }
 );
 
-//logout user
 export const logoutUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -234,7 +229,6 @@ export const logoutUser = CatchAsyncError(
   }
 );
 
-// update access token
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -269,7 +263,6 @@ export const updateAccessToken = CatchAsyncError(
   }
 );
 
-//get user info
 export const getUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -281,7 +274,6 @@ export const getUserInfo = CatchAsyncError(
   }
 );
 
-//get user info by user id
 export const getUserInfoById = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -328,7 +320,6 @@ export const socialAuth = CatchAsyncError(
   }
 );
 
-//update user info
 interface IUpdateUserInfo {
   name?: string;
   email?: string;
@@ -381,7 +372,6 @@ export const updateUserInfo = CatchAsyncError(
   }
 );
 
-//update user password
 interface IUpdatePassword {
   oldPassword: string;
   newPassword: string;
@@ -427,7 +417,6 @@ export const updatePassword = CatchAsyncError(
 interface IUpdateProfileAvatar {
   avatar: string;
 }
-//update profile Avatar
 export const updateProfileAvatar = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -438,9 +427,7 @@ export const updateProfileAvatar = CatchAsyncError(
       const user = await userModel.findById(userId);
 
       if (avatar && user) {
-        //if we have avatar
         if (user?.avatar?.public_id) {
-          //first delete old image
           await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
 
           const myCloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -477,7 +464,6 @@ export const updateProfileAvatar = CatchAsyncError(
   }
 );
 
-//get all users --admin
 export const getAllUsers = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -488,7 +474,6 @@ export const getAllUsers = CatchAsyncError(
   }
 );
 
-//update user role --onlyadmin
 export const updateUserRole = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -500,7 +485,6 @@ export const updateUserRole = CatchAsyncError(
   }
 );
 
-//delete user --only admin
 export const deleteUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

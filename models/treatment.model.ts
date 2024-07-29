@@ -19,7 +19,7 @@ export interface ITreatment extends Document {
   description: string;
   price: number;
   estimatedPrice?: number;
-  duration: number; // in minutes
+  duration: number; 
   image: string;
   reviews: IReview[];
   ratings?: number;

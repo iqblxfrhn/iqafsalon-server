@@ -4,7 +4,6 @@ import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import cron from "node-cron";
 
-//get all notifications
 export const getNotifications = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -22,7 +21,6 @@ export const getNotifications = CatchAsyncError(
   }
 );
 
-//update notification status
 export const updateNotificationStatus = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +50,6 @@ export const updateNotificationStatus = CatchAsyncError(
   }
 );
 
-//delete notification --admin
 cron.schedule("0 0 0 * * *", async () => {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 

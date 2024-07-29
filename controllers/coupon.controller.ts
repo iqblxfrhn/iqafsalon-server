@@ -5,7 +5,6 @@ import CouponModel from "../models/coupon.model";
 import { getAllCouponsService, newCoupon } from "../services/coupon.service";
 import { redis } from "../utils/redis";
 
-//create new Coupon
 export const createCoupon = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -18,7 +17,6 @@ export const createCoupon = CatchAsyncError(
   }
 );
 
-//edit product
 export const editCoupon = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -41,7 +39,6 @@ export const editCoupon = CatchAsyncError(
   }
 );
 
-//get single coupon _id
 export const getSingleCoupon = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -71,7 +68,6 @@ export const getSingleCoupon = CatchAsyncError(
   }
 );
 
-//get all coupon
 export const getAllCoupons = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -82,7 +78,6 @@ export const getAllCoupons = CatchAsyncError(
   }
 );
 
-//delete coupon
 export const deleteCoupon = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -101,6 +96,30 @@ export const deleteCoupon = CatchAsyncError(
       res.status(200).json({
         success: true,
         message: "Coupon deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const applyCoupon = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { code } = req.body;
+
+      const coupon = await CouponModel.findOne({ code });
+
+      if (!coupon) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid coupon code",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        coupon,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

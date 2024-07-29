@@ -10,7 +10,6 @@ import ProductModel from "../models/product.model";
 import { redis } from "../utils/redis";
 import NotificationModel from "../models/notification.model";
 
-//upload product
 export const uploadProduct = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -33,7 +32,6 @@ export const uploadProduct = CatchAsyncError(
   }
 );
 
-//edit product
 export const editProduct = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -72,7 +70,6 @@ export const editProduct = CatchAsyncError(
   }
 );
 
-//get single product --without purchase
 export const getSingleProduct = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,7 +97,6 @@ export const getSingleProduct = CatchAsyncError(
     }
   }
 );
-// get product content -- only for valid user
 export const getProductByUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -129,7 +125,6 @@ export const getProductByUser = CatchAsyncError(
   }
 );
 
-//add review in product
 
 interface IAddReviewData {
   productId: string;
@@ -145,7 +140,6 @@ export const addReview = CatchAsyncError(
 
       const productId = req.params.id;
 
-      // check if product id already exist in userproduct list based on _id
       const productExist = userProductList?.some(
         (product: any) => product._id.toString() === productId.toString()
       );
@@ -178,7 +172,6 @@ export const addReview = CatchAsyncError(
 
       await product?.save();
 
-      //create notification
       await NotificationModel.create({
         user: req.user?._id,
         title: "New Review Received",
@@ -195,7 +188,6 @@ export const addReview = CatchAsyncError(
   }
 );
 
-//add replies review in product
 interface IAddReviewData {
   comment: string;
   productId: string;
@@ -243,7 +235,6 @@ export const addReplyToReview = CatchAsyncError(
   }
 );
 
-//get all product
 export const getAllProducts = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -254,7 +245,6 @@ export const getAllProducts = CatchAsyncError(
   }
 );
 
-//delete product --only admin
 export const deleteProduct = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

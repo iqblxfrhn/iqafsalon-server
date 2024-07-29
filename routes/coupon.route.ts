@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  applyCoupon,
   createCoupon,
   deleteCoupon,
   editCoupon,
@@ -15,6 +16,7 @@ couponRouter.post(
   isAuthenticated,
   authorizeRoles("admin")
 );
+couponRouter.post("/apply-coupon", applyCoupon, isAuthenticated);
 couponRouter.put(
   "/edit-coupon/:id",
   editCoupon,
@@ -22,18 +24,12 @@ couponRouter.put(
   authorizeRoles("admin")
 );
 couponRouter.get("/get-coupon/:id", getSingleCoupon, isAuthenticated);
-couponRouter.get(
-  "/get-coupons",
-  getAllCoupons,
-  isAuthenticated,
-  authorizeRoles("admin")
-);
+couponRouter.get("/get-coupons", getAllCoupons, isAuthenticated);
 couponRouter.delete(
   "/delete-coupon/:id",
   deleteCoupon,
   isAuthenticated,
   authorizeRoles("admin")
 );
-
 
 export default couponRouter;

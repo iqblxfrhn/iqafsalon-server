@@ -56,11 +56,9 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     address: {
       type: String,
-      // required: [true, "Please enter your address"],
     },
     phone: {
       type: String,
-      // required: [true, "Please enter your phone number"],
     },
     isVerified: {
       type: Boolean,
@@ -80,7 +78,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Hash Password before saving
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -89,21 +86,18 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-// sign access token
 userSchema.methods.SignAccessToken = function () {
   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
     expiresIn: "5m",
   });
 };
 
-// sign refresh token
 userSchema.methods.SignRefreshToken = function () {
   return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
     expiresIn: "3d",
   });
 };
 
-// compare password
 userSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {

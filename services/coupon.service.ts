@@ -2,7 +2,6 @@ import { NextFunction, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import CouponModel from "../models/coupon.model";
 
-//create new Coupon
 export const newCoupon = CatchAsyncError(async (data: any, res: Response) => {
   const coupon = await CouponModel.create(data);
 
@@ -12,7 +11,6 @@ export const newCoupon = CatchAsyncError(async (data: any, res: Response) => {
   });
 });
 
-//get all Coupons
 export const getAllCouponsService = async (res: Response) => {
   const coupons = await CouponModel.find().sort({ createdAt: -1 });
 
