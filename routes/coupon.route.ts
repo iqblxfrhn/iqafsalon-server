@@ -13,15 +13,11 @@ const couponRouter = express.Router();
 couponRouter.post(
   "/create-coupon",
   createCoupon,
-  isAuthenticated,
-  authorizeRoles("admin")
 );
 couponRouter.post("/apply-coupon", applyCoupon, isAuthenticated);
 couponRouter.put(
   "/edit-coupon/:id",
   editCoupon,
-  isAuthenticated,
-  authorizeRoles("admin")
 );
 couponRouter.get("/get-coupon/:id", getSingleCoupon, isAuthenticated);
 couponRouter.get("/get-coupons", getAllCoupons, isAuthenticated);
